@@ -25,8 +25,12 @@ class Stand():
     def __init__(self,stand,year):
         #wczytuje tablice ale tu musi byc jakas logika zeby wczytywacodpowiednia tablice
         self.tablica=pd.read_csv('tab.csv')
-
-        self.current_age=self.calculate_current_age(stand['year_of_inventory'],stand['age'],year)
+        try:
+            self.current_age=self.calculate_current_age(stand['year_of_inventory'],stand['age'],year)
+            print(self.tablica.loc[self.tablica['Age']==self.current_age]['LargeTimber'].values[0])
+        except:
+            print("Wiek wykracza poza zakres tabeli, uzywam wieku poczatkowego !!!")
+            self.current_age=stand['age']
         self.current_large_timber=float(self.tablica.loc[self.tablica['Age']==self.current_age]['LargeTimber'].values[0].replace(',','.'))
         self.current_small_timber=float(self.tablica.loc[self.tablica['Age']==self.current_age]['SmallTimber'].values[0].replace(',','.'))
         self.current_total_timber=self.current_large_timber+self.current_small_timber
@@ -61,6 +65,6 @@ drzewostan_dzisiaj.print_summary()
 #dstan za 15 lat
 #cos tutaj nie halo z tymi obliczeniami
 dstan_15=Stand(dstan,datetime.today().year+15)
-for x in range(15,60):
+for x in range(15,100):
     dstan_15=Stand(dstan,datetime.today().year+x)
     print(dstan_15.total_timber_per_area)
